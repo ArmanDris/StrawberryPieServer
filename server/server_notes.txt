@@ -1,5 +1,3 @@
-# StrawberryPieServer
-
 To run server:
 sudo gunicorn --access-logfile - --access-logformat "%(h)s %(r)s %(s)s %(t)s %(b)s"  --bind 127.0.0.1:8000 server:app
 
