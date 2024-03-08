@@ -1,22 +1,24 @@
 import sqlite3
-from flask import app, g
+from flask import current_app, g
 
-def get_db():
+def get_db(database_name):
     if 'db' not in g:
-        # Adjust the path according to your `schema.sql` location
-        g.db = sqlite3.connect(app.config['data/schema.sql'])
-        g.db.row_factory = sqlite3.Row
+        if (database_name == 'leaderboard'):
+            g.db = sqlite3.connect('app/data/leaderboard.db')
+        elif (database_name == 'test'):
+            g.db = sqlite3.connect('app/data/test.db')
+        else:
+            print('Invalid database name');
     return g.db
 
 def close_db(e=None):
     db = g.pop('db', None)
-
     if db is not None:
         db.close()
 
-def init_db():
-    db = get_db()
-    # Adjust the path to where your `schema.sql` file is located
-    with app.open_resource('data/schema.sql') as f:
+def init_db(database_name):
+    db = get_db(database_name)
+    # Execute the schema.sql file to initialize the database schema
+    with current_app.open_resource('data/schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
     db.commit()
